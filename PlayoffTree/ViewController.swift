@@ -25,13 +25,13 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         
         let myMatches = [Match(title: "Match1", homeTeam: "VAL", awayTeam: "ARS"), Match(title: "Match2", homeTeam: "BRC", awayTeam: "MAL"), Match(title: "Match3", homeTeam: "DOR", awayTeam: "FCB"), Match(title: "Match4", homeTeam: "FCB", awayTeam: "SWE"), Match(title: "Match5", homeTeam: "MCU", awayTeam: "RAC"), Match(title: "Match6", homeTeam: "POR", awayTeam: "RMD"),  Match(title: "Match7", homeTeam: "LIV", awayTeam: "LEC")]
         
-        playOffTree = PlayOffTree(firstRoundMatchesArray: myMatches)
+        playOffTree = PlayOffTree(treeMatches: myMatches)
         numberOfMatchesInRound = playOffTree!.getNumberOfMatchesInRound()
         treeMatches = playOffTree!.getMatches()
         
     }
     
-    
+    //TODO: See what you can do with this
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         queue.cancelAllOperations()
@@ -114,9 +114,14 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         let cell = tableView.dequeueReusableCellWithIdentifier("matchCell") as! MatchCell
         
         cell.backgroundColor = UIColor.clearColor()
-        cell.matchTitle.text = treeMatches[indexPath.row].title
-        cell.homeTeam.text = treeMatches[indexPath.row].homeTeam
-        cell.awayTeam.text = treeMatches[indexPath.row].awayTeam
+        
+        let matchIndex = treeMatches.count - numberOfMatchesInRound[roundNumber] - indexPath.row
+        print("Round: ", roundNumber)
+        print(matchIndex)
+        
+        cell.matchTitle.text = treeMatches[matchIndex].title
+        cell.homeTeam.text = treeMatches[matchIndex].homeTeam
+        cell.awayTeam.text = treeMatches[matchIndex].awayTeam
         
         return cell
         

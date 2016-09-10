@@ -13,48 +13,42 @@ class PlayOffTree {
     private var numberOfRounds = 0
     private var numberOfTeams = 0
     
-    private var firstRoundMatches = [Match]()
+    private var treeMatches = [Match]()
     private var numberOfMatchesInRound = [Int]()
     
-    private var matchesInRound = [Match]()
+    private var totalMatchesNumber = 0
     
     init(numberOfRounds: Int){
         self.numberOfRounds = numberOfRounds
         self.numberOfTeams = getNumberOfTeamsInFirstRound(numberOfRounds)
-        self.firstRoundMatches = generateMatchesFromNumberOfTeams(numberOfTeams)
         self.numberOfMatchesInRound = getNumberOfMatchesInRoundFromTeam(numberOfTeams)
+        self.treeMatches = generateMatches(totalMatchesNumber)
     }
     
     init(numberOfTeams: Int){
-        
         if isValidPowerOfTwo(numberOfTeams) {
             self.numberOfRounds = getNumberOfRounds(numberOfTeams)
             self.numberOfTeams = numberOfTeams
-            self.firstRoundMatches = generateMatchesFromNumberOfTeams(numberOfTeams)
             self.numberOfMatchesInRound = getNumberOfMatchesInRoundFromTeam(numberOfTeams)
+            self.treeMatches = generateMatches(totalMatchesNumber)
         }
-        
-        
     }
     
     init(numberOfMatches: Int){
-        
         if isValidPowerOfTwo(numberOfMatches+1) {
             self.numberOfRounds = getNumberOfRounds(numberOfMatches+1)
             self.numberOfTeams = numberOfMatches+1
-            self.firstRoundMatches = generateMatches(numberOfMatches)
+            self.treeMatches = generateMatches(numberOfMatches)
             self.numberOfMatchesInRound = getNumberOfMatchesInRoundFromTeam((numberOfMatches+1))
         }
-        
     }
     
-    init(firstRoundMatchesArray: [Match]){
-        if isValidPowerOfTwo(firstRoundMatchesArray.count + 1) {
-            self.firstRoundMatches = firstRoundMatchesArray
-            self.numberOfTeams = firstRoundMatchesArray.count + 1
-            self.numberOfRounds = getNumberOfRounds(firstRoundMatchesArray.count + 1)
-            self.numberOfMatchesInRound = getNumberOfMatchesInRoundFromTeam(firstRoundMatchesArray.count + 1)
-            
+    init(treeMatches: [Match]){
+        if isValidPowerOfTwo(treeMatches.count + 1) {
+            self.treeMatches = treeMatches
+            self.numberOfTeams = treeMatches.count + 1
+            self.numberOfRounds = getNumberOfRounds(treeMatches.count + 1)
+            self.numberOfMatchesInRound = getNumberOfMatchesInRoundFromTeam(treeMatches.count + 1)
         }
     }
     
@@ -65,7 +59,7 @@ class PlayOffTree {
     }
     
     func getMatches() -> [Match]{
-        return firstRoundMatches
+        return treeMatches
     }
     
     
@@ -97,6 +91,7 @@ class PlayOffTree {
         
         if totalTeams > 1 {
             numberOfMatchesInRound.append(totalTeams/2)
+            totalMatchesNumber += totalTeams/2
             getNumberOfMatchesInRoundFromTeam(totalTeams/2)
         }
         
@@ -145,8 +140,11 @@ class PlayOffTree {
             matches.append(Match(title: theTitle, homeTeam: "T1", awayTeam: "T2"))
         }
         
+        print("Number Of Matches: ", matches.count)
+        
         return matches
     }
+    
     
     
     func isValidPowerOfTwo(number: Int) -> Bool{
