@@ -15,6 +15,12 @@ if you want something different for the final for example.
 At first I thought about UIScrollView to hold the main view, but as of apple documentation UICollectionView is more suited for this
 project since it gives me more control and flexibilty for dynamically changing the layout for design enhancements.
 
+### Dictionary vs Array
+
+I had two options to store the matches before display, either store them in a dictionary of [Int:[Match]] where Int is the
+Round number and [Match] is the array of matches for each Round, the other option would be storing all matches in a single
+array and access them through the index number of the match. Since both have nearly O(1) when it comes to accessing the value I went with Array because the order is important in my case.
+
 ### Full Tree
 
 The assumption here is this is a full tree so it grows by power of 2 so that the winner of a match will find an opponent.
