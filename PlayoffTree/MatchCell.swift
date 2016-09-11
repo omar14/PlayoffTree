@@ -14,5 +14,7 @@ class MatchCell: UITableViewCell {
     @IBOutlet weak var matchTitle: UILabel!
     @IBOutlet weak var homeTeam: UILabel!
     @IBOutlet weak var awayTeam: UILabel!
+    @IBOutlet weak var vsLabel: UILabel!
+    @IBOutlet weak var matchBtn: UIButton!
     
 }

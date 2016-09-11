@@ -15,7 +15,7 @@
 		07C0B9FF1D80E5D600E1E163 /* RoundCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C0B9FE1D80E5D600E1E163 /* RoundCell.swift */; };
 		07C0BA081D81C5AC00E1E163 /* Match.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C0BA071D81C5AC00E1E163 /* Match.swift */; };
 		07C0BA0B1D81C72B00E1E163 /* MatchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C0BA0A1D81C72B00E1E163 /* MatchCell.swift */; };
-		07C0BA0E1D81DB1C00E1E163 /* Funcs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C0BA0D1D81DB1C00E1E163 /* Funcs.swift */; };
+		07C0BA0E1D81DB1C00E1E163 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C0BA0D1D81DB1C00E1E163 /* Utilities.swift */; };
 		07C0BA101D821C9C00E1E163 /* PlayOffTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C0BA0F1D821C9C00E1E163 /* PlayOffTree.swift */; };
 /* End PBXBuildFile section */
 
@@ -30,7 +30,7 @@
 		07C0B9FE1D80E5D600E1E163 /* RoundCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoundCell.swift; sourceTree = "<group>"; };
 		07C0BA071D81C5AC00E1E163 /* Match.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Match.swift; sourceTree = "<group>"; };
 		07C0BA0A1D81C72B00E1E163 /* MatchCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MatchCell.swift; sourceTree = "<group>"; };
-		07C0BA0D1D81DB1C00E1E163 /* Funcs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Funcs.swift; sourceTree = "<group>"; };
+		07C0BA0D1D81DB1C00E1E163 /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		07C0BA0F1D821C9C00E1E163 /* PlayOffTree.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayOffTree.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -98,7 +98,7 @@
 		07C0BA0C1D81DB0F00E1E163 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				07C0BA0D1D81DB1C00E1E163 /* Funcs.swift */,
+				07C0BA0D1D81DB1C00E1E163 /* Utilities.swift */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";
@@ -175,7 +175,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				07C0BA0B1D81C72B00E1E163 /* MatchCell.swift in Sources */,
-				07C0BA0E1D81DB1C00E1E163 /* Funcs.swift in Sources */,
+				07C0BA0E1D81DB1C00E1E163 /* Utilities.swift in Sources */,
 				07C0B9FF1D80E5D600E1E163 /* RoundCell.swift in Sources */,
 				07C0B9EF1D80AD2600E1E163 /* ViewController.swift in Sources */,
 				07C0B9ED1D80AD2600E1E163 /* AppDelegate.swift in Sources */,

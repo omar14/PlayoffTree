@@ -10,50 +10,59 @@ import Foundation
 
 class PlayOffTree {
     
+    //MARK: Tree properties with default values due to the empty constructor
     private var numberOfRounds = 0
     private var numberOfTeams = 0
-    
     private var treeMatches = [Match]()
-    private var numberOfMatchesInRound = [Int]()
-    
+    private var numberOfMatchesPerRound = [Int]()
     private var totalMatchesNumber = 0
     
+    
+    init(){
+        
+    }
+    
+    //MARK: Number of Rounds init
     init(numberOfRounds: Int){
         self.numberOfRounds = numberOfRounds
-        self.numberOfTeams = getNumberOfTeamsInFirstRound(numberOfRounds)
-        self.numberOfMatchesInRound = getNumberOfMatchesInRoundFromTeam(numberOfTeams)
+        self.numberOfTeams = getNumberOfTeams(numberOfRounds)
+        self.numberOfMatchesPerRound = getNumberOfMatchesPerRoundFromTeam(numberOfTeams)
         self.treeMatches = generateMatches(totalMatchesNumber)
     }
     
+    //MARK: Number of Teams init
     init(numberOfTeams: Int){
-        if isValidPowerOfTwo(numberOfTeams) {
+        if isValidPowerOfTwo(numberOfTeams) && numberOfTeams != 1 {
             self.numberOfRounds = getNumberOfRounds(numberOfTeams)
             self.numberOfTeams = numberOfTeams
-            self.numberOfMatchesInRound = getNumberOfMatchesInRoundFromTeam(numberOfTeams)
+            self.numberOfMatchesPerRound = getNumberOfMatchesPerRoundFromTeam(numberOfTeams)
             self.treeMatches = generateMatches(totalMatchesNumber)
         }
     }
     
+    //MARK: Number of Matches init
     init(numberOfMatches: Int){
         if isValidPowerOfTwo(numberOfMatches+1) {
             self.numberOfRounds = getNumberOfRounds(numberOfMatches+1)
             self.numberOfTeams = numberOfMatches+1
+            self.numberOfMatchesPerRound = getNumberOfMatchesPerRoundFromTeam((numberOfMatches+1))
             self.treeMatches = generateMatches(numberOfMatches)
-            self.numberOfMatchesInRound = getNumberOfMatchesInRoundFromTeam((numberOfMatches+1))
         }
     }
     
+    
+    //MARK: Matches Array init
     init(treeMatches: [Match]){
         if isValidPowerOfTwo(treeMatches.count + 1) {
-            self.treeMatches = treeMatches
-            self.numberOfTeams = treeMatches.count + 1
             self.numberOfRounds = getNumberOfRounds(treeMatches.count + 1)
-            self.numberOfMatchesInRound = getNumberOfMatchesInRoundFromTeam(treeMatches.count + 1)
+            self.numberOfTeams = treeMatches.count + 1
+            self.numberOfMatchesPerRound = getNumberOfMatchesPerRoundFromTeam(treeMatches.count + 1)
+            self.treeMatches = treeMatches
         }
     }
     
     
-    
+    //MARK: Public functions
     func getNumberOfRounds() -> Int{
         return numberOfRounds
     }
@@ -62,43 +71,21 @@ class PlayOffTree {
         return treeMatches
     }
     
-    
-    func getNumberOfMatchesInRound() -> [Int]{
-        return numberOfMatchesInRound
+    func getMatch(index: Int) -> Match {
+        return treeMatches[index]
     }
     
-    
-    private func getNumberOfRounds(numberOfTeams: Int) -> Int{
-        
-        if numberOfTeams > 1 {
-            numberOfRounds += 1
-            getNumberOfRounds(numberOfTeams/2)
-        }
-        
-        return numberOfRounds
+    func numberOfMatchesInRound() -> [Int]{
+        return numberOfMatchesPerRound
     }
     
+    func numberOfMatchesInRound(roundNumber: Int) -> Int{
+        return numberOfMatchesPerRound[roundNumber]
+    }
     
-    func getNumberOfTeamsInFirstRound(numberOfRounds: Int) -> Int{
-        
+    func getNumberOfTeams(numberOfRounds: Int) -> Int{
         return Int(pow(2.0, Double(numberOfRounds)))
-        
     }
-    
-    
-    
-    private func getNumberOfMatchesInRoundFromTeam(totalTeams: Int) -> [Int]{
-        
-        if totalTeams > 1 {
-            numberOfMatchesInRound.append(totalTeams/2)
-            totalMatchesNumber += totalTeams/2
-            getNumberOfMatchesInRoundFromTeam(totalTeams/2)
-        }
-        
-        return numberOfMatchesInRound
-    }
-    
-    
     
     func getRoundName(numberOfMatches: Int) -> String {
         
@@ -116,43 +103,46 @@ class PlayOffTree {
     }
     
     
-    //Generate default matches from #Teams
-    func generateMatchesFromNumberOfTeams(numberOfTeams: Int) -> [Match] {
+    //MARK: Private functions
+    private func getNumberOfRounds(numberOfTeams: Int) -> Int{
         
-        var matches = [Match]()
-        
-        for index in 1...numberOfTeams/2{
-            let theTitle = "Match " + String(index)
-            matches.append(Match(title: theTitle, homeTeam: "T1", awayTeam: "T2"))
+        if numberOfTeams > 1 {
+            numberOfRounds += 1
+            getNumberOfRounds(numberOfTeams/2)
         }
         
-        return matches
+        return numberOfRounds
     }
     
     
-    //Generate default matches from #Matches
-    func generateMatches(numberOfMatches: Int) -> [Match] {
+    
+    private func getNumberOfMatchesPerRoundFromTeam(totalTeams: Int) -> [Int]{
+        
+        if totalTeams > 1 {
+            numberOfMatchesPerRound.append(totalTeams/2)
+            totalMatchesNumber += totalTeams/2
+            getNumberOfMatchesPerRoundFromTeam(totalTeams/2)
+        }
+        
+        return numberOfMatchesPerRound
+    }
+    
+    
+    
+    
+    //Generate default matches// (Another alternative will be just showing placeholder names without creating an array, but this way you can access the matches if you want even though it's a little bit slower specially when the number of round becomes big)
+    private func generateMatches(numberOfMatches: Int) -> [Match] {
         
         var matches = [Match]()
-        
         for index in 1...numberOfMatches{
             let theTitle = "Match " + String(index)
             matches.append(Match(title: theTitle, homeTeam: "T1", awayTeam: "T2"))
         }
         
-        print("Number Of Matches: ", matches.count)
-        
         return matches
     }
     
-    
-    
-    func isValidPowerOfTwo(number: Int) -> Bool{
-        
-        return (number != 0) && ((number & (number - 1)) == 0)
-        
-    }
-    
+
 
     
 }

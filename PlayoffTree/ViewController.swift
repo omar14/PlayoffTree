@@ -10,48 +10,50 @@ import UIKit
 
 class ViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate {
 
-    
+    //MARK: IBOutlets
     @IBOutlet weak var mainCollectionView: UICollectionView!
+    @IBOutlet weak var hintMessage: UILabel!
+    @IBOutlet weak var loadingIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var segmentedControl: UISegmentedControl!
+    @IBOutlet weak var textField: UITextField!
     
-    
+    //MARK: Variables and properties
     var roundNumber = 0
+    var playOffTree = PlayOffTree()
+    var generateOperation = NSOperation()
+    let queue = NSOperationQueue()
     
-    var playOffTree: PlayOffTree?
-    var numberOfMatchesInRound = [Int]()
-    var treeMatches = [Match]()
     
+    //MARK: ViewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let myMatches = [Match(title: "Match1", homeTeam: "VAL", awayTeam: "ARS"), Match(title: "Match2", homeTeam: "BRC", awayTeam: "MAL"), Match(title: "Match3", homeTeam: "DOR", awayTeam: "FCB"), Match(title: "Match4", homeTeam: "FCB", awayTeam: "SWE"), Match(title: "Match5", homeTeam: "MCU", awayTeam: "RAC"), Match(title: "Match6", homeTeam: "POR", awayTeam: "RMD"),  Match(title: "Match7", homeTeam: "LIV", awayTeam: "LEC")]
+        // Example of an array of matches to generate the tree from
+        let myMatches = [Match(title: "Match1", homeTeam: "LEC", awayTeam: "ARS"), Match(title: "Match2", homeTeam: "BRC", awayTeam: "MAL"), Match(title: "Match3", homeTeam: "DOR", awayTeam: "FCB"), Match(title: "Match4", homeTeam: "FCB", awayTeam: "SWE"), Match(title: "Match5", homeTeam: "MCU", awayTeam: "RAC"), Match(title: "Match6", homeTeam: "POR", awayTeam: "RMD"),  Match(title: "Match7", homeTeam: "VAL", awayTeam: "LIV")]
         
         playOffTree = PlayOffTree(treeMatches: myMatches)
-        numberOfMatchesInRound = playOffTree!.getNumberOfMatchesInRound()
-        treeMatches = playOffTree!.getMatches()
+        mainCollectionView.allowsSelection = false
         
+        self.hideKeyboardWhenTappedAround()
     }
     
-    //TODO: See what you can do with this
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        queue.cancelAllOperations()
-        playOffTree = nil
-    }
+    
+    //MARK: UICollectionView Functions
     
     func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
-        return (playOffTree?.getNumberOfRounds())!
+        return playOffTree.getNumberOfRounds()
     }
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        
         return 1
-        
     }
     
+    
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-     
+        
         return CGSizeMake(collectionView.frame.width, collectionView.frame.height)
     }
+    
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         
@@ -72,6 +74,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
        
         roundNumber = indexPath.section
         
+        // To disable the header to stick while scrolling
         let viewHieght = CGFloat(80)
         let dummeyView = UIView(frame: CGRectMake(0,0,MainCell.matchTableView.bounds.size.width, viewHieght))
         MainCell.matchTableView.tableHeaderView = dummeyView
@@ -81,11 +84,12 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         MainCell.matchTableView.tableFooterView = UIView()
         MainCell.matchTableView.allowsSelection = false
         
-        
         MainCell.matchTableView.reloadData()
         
     }
     
+    
+    //MARK: UITableView Functions
     
     func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         
@@ -93,7 +97,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         roundView.backgroundColor = UIColor.clearColor()
         
         let roundTitle = UILabel(frame: roundView.frame)
-        roundTitle.text = playOffTree?.getRoundName(numberOfMatchesInRound[roundNumber])
+        roundTitle.text = playOffTree.getRoundName(playOffTree.numberOfMatchesInRound(roundNumber))
         roundTitle.textAlignment = .Center
         roundTitle.textColor = UIColor.whiteColor()
         
@@ -105,7 +109,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return numberOfMatchesInRound[roundNumber]
+        return playOffTree.numberOfMatchesInRound(roundNumber)
     }
     
     
@@ -115,22 +119,40 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         
         cell.backgroundColor = UIColor.clearColor()
         
-        let matchIndex = treeMatches.count - numberOfMatchesInRound[roundNumber] - indexPath.row
-        print("Round: ", roundNumber)
-        print(matchIndex)
+        let matchIndex = (playOffTree.getMatches().count) - (playOffTree.numberOfMatchesInRound(roundNumber)) - indexPath.row
         
-        cell.matchTitle.text = treeMatches[matchIndex].title
-        cell.homeTeam.text = treeMatches[matchIndex].homeTeam
-        cell.awayTeam.text = treeMatches[matchIndex].awayTeam
+        
+        if matchIndex % 2 == 0 {
+            cell.vsLabel.hidden = true
+        }
+        else {
+            cell.vsLabel.hidden = false
+        }
+        
+        cell.matchTitle.text = playOffTree.getMatch(matchIndex).title
+        cell.homeTeam.text = playOffTree.getMatch(matchIndex).homeTeam
+        cell.awayTeam.text = playOffTree.getMatch(matchIndex).awayTeam
+        
+        cell.matchBtn.tag = matchIndex
+        cell.matchBtn.addTarget(self, action: #selector(ViewController.matchSelected(_:)), forControlEvents: .TouchUpInside)
         
         return cell
-        
     }
     
     
-    @IBOutlet weak var segmentedControl: UISegmentedControl!
-    @IBOutlet weak var textField: UITextField!
+    //MARK: Match Selected Response
+    func matchSelected(sender: UIButton){
+        let matchIndex = sender.tag
+        
+        let matchAlert = UIAlertController(title: playOffTree.getMatch(matchIndex).title, message:
+            "Go to match page", preferredStyle: UIAlertControllerStyle.Alert)
+        matchAlert.addAction(UIAlertAction(title: ":)", style: UIAlertActionStyle.Default,handler: nil))
+        
+        self.presentViewController(matchAlert, animated: true, completion: nil)
+    }
     
+    
+    //MARK: UISegmentedControl Change Type Response
     @IBAction func changeTypeOfTree(sender: UISegmentedControl) {
         
         textField.text = ""
@@ -139,43 +161,47 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         case 0:
             textField.placeholder = "Add number of rounds"
         case 1:
-            textField.placeholder = "Add number of teams participating"
+            textField.placeholder = "2,4,8,16,32,.. (2^x)"
         case 2:
-            textField.placeholder = "Add number of matches"
+            textField.placeholder = "1,3,7,15,31,.. (2^x - 1)"
         default:
             break
         }
     }
     
-    var generateOperation = NSOperation()
-    let queue = NSOperationQueue()
-
+    
+    //MARK: Generate Tree Button Response
     @IBAction func generateTreeClick(sender: UIButton) {
         
         guard let text = textField.text where !text.isEmpty else {
             return
         }
         
+        sender.setTitle("", forState: UIControlState.Normal)
+        loadingIndicator.startAnimating()
         
+        let enteredNumber = Int(self.textField.text!)!
         
         switch segmentedControl.selectedSegmentIndex {
         case 0:
             generateOperation = NSBlockOperation(block: {
-                self.playOffTree = PlayOffTree(numberOfRounds: Int(self.textField.text!)!)
-                self.numberOfMatchesInRound = self.playOffTree!.getNumberOfMatchesInRound()
-                self.treeMatches = self.playOffTree!.getMatches()
+                self.playOffTree = PlayOffTree(numberOfRounds: enteredNumber)
             })
         case 1:
+            if !isValidPowerOfTwo(enteredNumber) || enteredNumber == 1{
+                hintMessage.alpha = 1
+                hintMessage.text = "2,4,8,16,32,.. (2^x) for full tree"
+            }
             generateOperation = NSBlockOperation(block: {
-                self.playOffTree = PlayOffTree(numberOfTeams: Int(self.textField.text!)!)
-                self.numberOfMatchesInRound = self.playOffTree!.getNumberOfMatchesInRound()
-                self.treeMatches = self.playOffTree!.getMatches()
+                self.playOffTree = PlayOffTree(numberOfTeams: enteredNumber)
             })
         case 2:
+            if !isValidPowerOfTwo(enteredNumber+1){
+                hintMessage.alpha = 1
+                hintMessage.text = "1,3,7,15,31,.. (2^x - 1) for full tree"
+            }
             generateOperation = NSBlockOperation(block: {
-                self.playOffTree = PlayOffTree(numberOfMatches: Int(self.textField.text!)!)
-                self.numberOfMatchesInRound = self.playOffTree!.getNumberOfMatchesInRound()
-                self.treeMatches = self.playOffTree!.getMatches()
+                self.playOffTree = PlayOffTree(numberOfMatches: enteredNumber)
             })
         default:
             break
@@ -186,12 +212,16 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
                 self.mainCollectionView.reloadData()
                 self.mainCollectionView.setContentOffset(CGPointZero, animated: true)
                 self.textField.resignFirstResponder()
+                sender.setTitle("Generate", forState: UIControlState.Normal)
+                self.loadingIndicator.stopAnimating()
+                UIView.animateWithDuration(6, animations: {
+                    self.hintMessage.alpha = 0
+                })
             })
         }
         
         queue.addOperation(generateOperation)
         
-    
         
     }
     

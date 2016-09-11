@@ -11,7 +11,5 @@ import UIKit
 class RoundCell: UICollectionViewCell {
 
     @IBOutlet weak var matchTableView: UITableView!
-    @IBOutlet weak var tableViewHieght: NSLayoutConstraint!
-    
     
 }
