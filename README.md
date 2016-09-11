@@ -1,6 +1,6 @@
 # PlayoffTree
 
-Generate a full playoff tree in multiple ways
+A simple way to generate a playoff tree for a tournament
 
 ## Notes
 
