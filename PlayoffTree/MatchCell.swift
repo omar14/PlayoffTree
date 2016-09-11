@@ -8,6 +8,8 @@
 
 import UIKit
 
+// The match cell of the UITableView, we can add more UI to the cell to enhance the design 
+
 class MatchCell: UITableViewCell {
 
     @IBOutlet weak var matchView: UIView!

@@ -257,6 +257,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="generateBtn" destination="rak-km-9qn" id="uQT-pX-uBM"/>
                         <outlet property="hintMessage" destination="3OO-kV-T5a" id="SPP-EZ-ozU"/>
                         <outlet property="loadingIndicator" destination="urw-ZF-dfz" id="4gY-wR-ynw"/>
                         <outlet property="mainCollectionView" destination="ec8-CT-6vZ" id="FIY-CD-cvJ"/>

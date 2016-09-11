@@ -8,8 +8,10 @@
 
 import UIKit
 
-class RoundCell: UICollectionViewCell {
+// Main UICollectionView cell IBOutlets, in order to enhance the design we can add more than the matches table view
 
+class RoundCell: UICollectionViewCell {
+    
     @IBOutlet weak var matchTableView: UITableView!
     
 }

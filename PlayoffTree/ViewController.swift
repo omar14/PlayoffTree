@@ -16,12 +16,13 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     @IBOutlet weak var loadingIndicator: UIActivityIndicatorView!
     @IBOutlet weak var segmentedControl: UISegmentedControl!
     @IBOutlet weak var textField: UITextField!
+    @IBOutlet weak var generateBtn: UIButton!
     
     //MARK: Variables and properties
     var roundNumber = 0
     var playOffTree = PlayOffTree()
     var generateOperation = NSOperation()
-    let queue = NSOperationQueue()
+    let operationQueue = NSOperationQueue()
     
     
     //MARK: ViewDidLoad
@@ -33,6 +34,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         
         playOffTree = PlayOffTree(treeMatches: myMatches)
         mainCollectionView.allowsSelection = false
+        
         
         self.hideKeyboardWhenTappedAround()
     }
@@ -186,6 +188,9 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         case 0:
             generateOperation = NSBlockOperation(block: {
                 self.playOffTree = PlayOffTree(numberOfRounds: enteredNumber)
+                NSOperationQueue.mainQueue().addOperationWithBlock({
+                    self.updateCollection()
+                })
             })
         case 1:
             if !isValidPowerOfTwo(enteredNumber) || enteredNumber == 1{
@@ -194,6 +199,9 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
             }
             generateOperation = NSBlockOperation(block: {
                 self.playOffTree = PlayOffTree(numberOfTeams: enteredNumber)
+                NSOperationQueue.mainQueue().addOperationWithBlock({
+                    self.updateCollection()
+                })
             })
         case 2:
             if !isValidPowerOfTwo(enteredNumber+1){
@@ -202,27 +210,28 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
             }
             generateOperation = NSBlockOperation(block: {
                 self.playOffTree = PlayOffTree(numberOfMatches: enteredNumber)
+                NSOperationQueue.mainQueue().addOperationWithBlock({
+                    self.updateCollection()
+                })
             })
         default:
             break
         }
         
-        generateOperation.completionBlock = {
-            NSOperationQueue.mainQueue().addOperationWithBlock({
-                self.mainCollectionView.reloadData()
-                self.mainCollectionView.setContentOffset(CGPointZero, animated: true)
-                self.textField.resignFirstResponder()
-                sender.setTitle("Generate", forState: UIControlState.Normal)
-                self.loadingIndicator.stopAnimating()
-                UIView.animateWithDuration(6, animations: {
-                    self.hintMessage.alpha = 0
-                })
-            })
-        }
         
-        queue.addOperation(generateOperation)
+        operationQueue.addOperation(generateOperation)
         
-        
+    }
+    
+    func updateCollection(){
+        mainCollectionView.reloadData()
+        mainCollectionView.setContentOffset(CGPointZero, animated: true)
+        textField.resignFirstResponder()
+        self.generateBtn.setTitle("Generate", forState: UIControlState.Normal)
+        loadingIndicator.stopAnimating()
+        UIView.animateWithDuration(6, animations: {
+            self.hintMessage.alpha = 0
+        })
     }
     
 }
