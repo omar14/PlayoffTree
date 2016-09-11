@@ -6,9 +6,7 @@ A simple way to generate a playoff tree for a tournament
 
 ### UI Structure
 
-Basically the tree consist of two main UIKit classes, UICollectionView to hold rounds view with horizontal scrolling and paging enabled. Each cell of
-the UICollectionView contains a UITableView to view the list of matches with vertical scrolling. This will give you the flexibility to manage each round
-if you want something different for the final for example.
+Basically the tree consist of two main UIKit classes, UICollectionView to hold rounds view with horizontal scrolling and paging enabled and a UITableView to hold the list of matches with vertical scrolling within the collection view cell. This will give you the flexibility to manage each Round if you want something different for the final Round for example.
 
 ### UIScrollView vs UICollectionView
 
